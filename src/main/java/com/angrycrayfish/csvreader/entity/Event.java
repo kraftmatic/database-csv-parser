@@ -14,21 +14,9 @@ public class Event {
     private int eventId;
 
     private Date eventDate;
-    private int goldsteinScale;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "locationId", referencedColumnName = "locationId")
-    private Location location;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sourceId", referencedColumnName = "sourceId")
-    private Source source;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "actorOneId", referencedColumnName = "actorId")
-    private Actor actorOne;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "actorTwoId", referencedColumnName = "actorId")
-    private Actor actorTwo;
+    private float goldsteinScale;
+    private int locationId;
+    private int sourceId;
+    private int actorOneId;
+    private int actorTwoId;
 }

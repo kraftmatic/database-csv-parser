@@ -14,8 +14,5 @@ public class Location {
 
     private String locationType;
     private String locationName;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CountryCode", referencedColumnName = "CountryCode")
-    private Country country;
+    private String countryCode;
 }

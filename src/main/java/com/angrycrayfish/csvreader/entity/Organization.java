@@ -3,6 +3,7 @@ package com.angrycrayfish.csvreader.entity;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity(name = "organization")
 @Data
@@ -14,8 +15,6 @@ public class Organization {
 
     private String groupName;
     private int groupSize;
+    private String countryCode;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CountryCode", referencedColumnName = "CountryCode")
-    private Country country;
 }

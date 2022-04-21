@@ -1,6 +1,7 @@
 package com.angrycrayfish.csvreader.entity;
 
 import lombok.Data;
+import org.springframework.boot.actuate.integration.IntegrationGraphEndpoint;
 
 import javax.persistence.*;
 
@@ -14,12 +15,7 @@ public class Actor {
 
     private String actorType;
     private String actorName;
+    private Integer groupId;
+    private String countryCode;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "CountryCode", referencedColumnName = "CountryCode")
-    private Country country;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "groupId", referencedColumnName = "groupId")
-    private Organization group;
 }

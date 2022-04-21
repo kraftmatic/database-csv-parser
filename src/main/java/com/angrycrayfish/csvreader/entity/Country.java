@@ -2,9 +2,9 @@ package com.angrycrayfish.csvreader.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.List;
+
 
 @Entity(name = "country")
 @Data
@@ -17,4 +17,6 @@ public class Country {
     private float longitude;
     private float latitude;
     private int population;
+    private String language;
+
 }

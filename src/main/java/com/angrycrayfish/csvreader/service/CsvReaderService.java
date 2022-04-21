@@ -1,68 +1,77 @@
 package com.angrycrayfish.csvreader.service;
 
-import com.angrycrayfish.csvreader.entity.*;
+import com.angrycrayfish.csvreader.mapper.EventProcessor;
 import com.angrycrayfish.csvreader.repository.EventRepository;
+import com.opencsv.CSVReader;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.sql.Date;
-import java.time.LocalDate;
+import java.io.File;
+import java.io.FileReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 @Service
 public class CsvReaderService {
 
     private EventRepository eventRepository;
+    private EventProcessor eventProcessor;
+    List<String> filenames = new LinkedList<>();
+    public static final Character COMMA_DELIMITER = '\t';
 
-    CsvReaderService(@NonNull EventRepository eventRepository){
+    CsvReaderService(@NonNull EventRepository eventRepository,
+                     @NonNull EventProcessor eventProcessor){
         this.eventRepository = eventRepository;
+        this.eventProcessor = eventProcessor;
     }
 
     @PostConstruct
     private void importCsvFiles(){
 
-        //TODO: remove this test data and implement CSV reader
+        final File folder = new File("D://Development//csvreader//src//main//resources//csvs");
+        listFilesForFolder(folder);
 
-        Country country = new Country();
-        country.setCountryCode("abc");
-        country.setLatitude(123.123F);
-        country.setLongitude(321.321F);
-        country.setPopulation(123456);
-
-        Location location = new Location();
-        location.setLocationName("locationName");
-        location.setLocationType("locationType");
-        location.setCountry(country);
-
-        Organization group = new Organization();
-        group.setGroupName("groupName");
-        group.setGroupSize(1234);
-        group.setCountry(country);
-
-        Actor actorOne = new Actor();
-        actorOne.setActorName("actorOneName");
-        actorOne.setActorType("actorType");
-        actorOne.setCountry(country);
-        actorOne.setGroup(group);
-
-        Actor actorTwo = new Actor();
-        actorTwo.setActorName("actorTwoName");
-        actorTwo.setActorType("actorType");
-        actorTwo.setCountry(country);
-        actorTwo.setGroup(group);
-
-        Source source = new Source();
-        source.setSourceUrl("www.whatever.com");
-        source.setPublisher("publisher");
-
-        Event event = new Event();
-        event.setEventDate(Date.valueOf(LocalDate.now()));
-        event.setGoldsteinScale(3);
-        event.setLocation(location);
-        event.setActorOne(actorOne);
-        event.setActorTwo(actorTwo);
-        event.setSource(source);
-
-        eventRepository.save(event);
+        extractEventsFromCsv();
     }
+
+    private void extractEventsFromCsv() {
+        List<List<String>> records = new ArrayList<List<String>>();
+
+        for(String fileName : filenames) {
+            try (CSVReader csvReader = new CSVReader(new FileReader("D://Development//csvreader//src//main//resources//csvs//" + fileName), COMMA_DELIMITER);) {
+                String[] values = null;
+                while ((values = csvReader.readNext()) != null) {
+                    records.add(Arrays.asList(values));
+                }
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        persistEventsToDatabase(records);
+
+    }
+
+    private void persistEventsToDatabase(List<List<String>> records) {
+        int counter = 1;
+        for(List<String> entry : records){
+            System.out.println("Processing entry " + counter);
+            counter++;
+            eventProcessor.mapEntryToEvent(entry);
+        }
+    }
+
+    public void listFilesForFolder(final File folder) {
+        for (final File fileEntry : folder.listFiles()) {
+            if (fileEntry.isDirectory()) {
+                listFilesForFolder(fileEntry);
+            } else {
+                if(fileEntry.getName().contains(".csv"))
+                    filenames.add(fileEntry.getName());
+            }
+        }
+    }
+
 }
